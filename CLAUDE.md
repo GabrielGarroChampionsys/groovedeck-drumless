@@ -15,12 +15,18 @@ La aplicación ya está completamente construida y corriendo localmente en:
 - **Estilos:** Vanilla CSS con Sistema de Diseño **Apple Pro Audio Glassmorphism** (`src/index.css`)
 - **Iconos:** Lucide-React
 - **Audio/Video:** YouTube IFrame Player API oficial
-- **Voz / Manos Libres:** Web Speech API nativa (Español)
+- **Voz / Manos Libres:** Web Speech API nativa con dictado continuo ininterrumpido
+- **Seguridad & Acceso:** Autenticación con Google y lista blanca estricta exclusiva para `gabriel.alejandro.garro@gmail.com`
 - **Persistencia:** LocalStorage estructurado con importación/exportación JSON (`src/services/storage.js`)
 
 ---
 
 ## 🎯 Funcionalidades Implementadas
+
+0. **Seguridad y Acceso Privado Exclusivo (`LoginGate.jsx` & `auth.js`):**
+   - Sistema de bloqueo inicial donde solo el correo `gabriel.alejandro.garro@gmail.com` puede ingresar.
+   - Cualquier otra cuenta que intente registrarse o entrar es rechazada de inmediato.
+   - En el futuro, este módulo se puede expandir para aceptar pagos o suscripciones con Stripe / LemonSqueezy.
 
 1. **YouTube Player Cockpit Ergonómico (`PlayerCockpit.jsx`):**
    - Integración oficial de YouTube IFrame API sin anuncios intermedios molestos.
