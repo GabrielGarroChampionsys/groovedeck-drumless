@@ -7,6 +7,7 @@ import VoiceAssistantModal from './components/VoiceAssistantModal';
 import StageModeView from './components/StageModeView';
 import LoginGate from './components/LoginGate';
 import ThemeSelectorModal from './components/ThemeSelectorModal';
+import HomeDashboard from './components/HomeDashboard';
 import { getStoredSongs, saveSongs, exportCatalogJSON, logPracticeSession } from './services/storage';
 import { getStoredUser, logoutUser } from './services/auth';
 import { getStoredTheme, applyTheme, initThemeListener } from './services/themeManager';
@@ -14,6 +15,7 @@ import { getStoredTheme, applyTheme, initThemeListener } from './services/themeM
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
   const [currentTheme, setCurrentTheme] = useState(() => getStoredTheme());
+  const [activeView, setActiveView] = useState('home'); // 'home' | 'studio' | 'library'
   const [songs, setSongs] = useState(() => getStoredSongs());
   const [activeSongId, setActiveSongId] = useState(() => songs[0]?.id || null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -176,27 +178,70 @@ export default function App() {
         }}
         currentTheme={currentTheme}
         onOpenThemeModal={() => setIsThemeModalOpen(true)}
+        activeView={activeView}
+        setActiveView={setActiveView}
+        currentSongTitle={currentSong?.title}
       />
 
       {/* Main Container */}
       <main style={{ flex: 1, maxWidth: '1440px', width: '100%', margin: '0 auto', padding: '24px 28px' }}>
-        {/* Active Player Cockpit */}
-        <PlayerCockpit
-          currentSong={currentSong}
-          onUpdateSong={handleUpdateCurrentSong}
-          onOpenEditModal={handleOpenEdit}
-        />
+        
+        {/* VISTA 1: HOME DASHBOARD */}
+        {activeView === 'home' && (
+          <HomeDashboard
+            songs={songs}
+            onSelectSong={(song) => {
+              setActiveSongId(song.id);
+              setActiveView('studio');
+            }}
+            onOpenVoiceAssistant={() => setIsVoiceModalOpen(true)}
+            onOpenAddModal={handleOpenAdd}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            userName={currentUser?.name?.split(' ')[0] || 'Gabriel'}
+          />
+        )}
 
-        {/* Library & Repertoire */}
-        <SongLibrary
-          songs={searchedSongs}
-          activeSongId={activeSongId}
-          onSelectSong={(song) => setActiveSongId(song.id)}
-          onDeleteSong={handleDeleteSong}
-          onEditSong={handleOpenEdit}
-          activeMoodFilter={activeMoodFilter}
-          setActiveMoodFilter={setActiveMoodFilter}
-        />
+        {/* VISTA 2: STUDIO COCKPIT (Reproductor Activo para Tocar) */}
+        {activeView === 'studio' && (
+          <div>
+            <PlayerCockpit
+              currentSong={currentSong}
+              onUpdateSong={handleUpdateCurrentSong}
+              onOpenEditModal={handleOpenEdit}
+            />
+
+            <SongLibrary
+              songs={searchedSongs}
+              activeSongId={activeSongId}
+              onSelectSong={(song) => {
+                setActiveSongId(song.id);
+                setActiveView('studio');
+              }}
+              onDeleteSong={handleDeleteSong}
+              onEditSong={handleOpenEdit}
+              activeMoodFilter={activeMoodFilter}
+              setActiveMoodFilter={setActiveMoodFilter}
+            />
+          </div>
+        )}
+
+        {/* VISTA 3: BIBLIOTECA COMPLETA */}
+        {activeView === 'library' && (
+          <SongLibrary
+            songs={searchedSongs}
+            activeSongId={activeSongId}
+            onSelectSong={(song) => {
+              setActiveSongId(song.id);
+              setActiveView('studio');
+            }}
+            onDeleteSong={handleDeleteSong}
+            onEditSong={handleOpenEdit}
+            activeMoodFilter={activeMoodFilter}
+            setActiveMoodFilter={setActiveMoodFilter}
+          />
+        )}
+
       </main>
 
       {/* Footer */}

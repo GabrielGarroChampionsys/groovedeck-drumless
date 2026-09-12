@@ -12,7 +12,10 @@ export default function Navbar({
   currentUser = null,
   onLogout = null,
   currentTheme = 'dark',
-  onOpenThemeModal = null
+  onOpenThemeModal = null,
+  activeView = 'home',
+  setActiveView = null,
+  currentSongTitle = null
 }) {
   return (
     <header style={{
@@ -58,8 +61,83 @@ export default function Navbar({
         </div>
       </div>
 
+      {/* Navigation Switcher (Home, Studio, Repertoire) */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        background: 'rgba(125, 125, 125, 0.08)',
+        borderRadius: 'var(--radius-md)',
+        padding: '3px',
+        border: '1px solid var(--border-subtle)'
+      }}>
+        <button
+          type="button"
+          onClick={() => setActiveView && setActiveView('home')}
+          className="btn"
+          style={{
+            padding: '6px 14px',
+            fontSize: '0.85rem',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            background: activeView === 'home' ? 'var(--bg-card)' : 'transparent',
+            boxShadow: activeView === 'home' ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
+            color: activeView === 'home' ? 'var(--amber)' : 'var(--text-secondary)',
+            fontWeight: activeView === 'home' ? 700 : 500
+          }}
+        >
+          <span>🏠 Inicio</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveView && setActiveView('studio')}
+          className="btn"
+          style={{
+            padding: '6px 14px',
+            fontSize: '0.85rem',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            background: activeView === 'studio' ? 'var(--bg-card)' : 'transparent',
+            boxShadow: activeView === 'studio' ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
+            color: activeView === 'studio' ? 'var(--amber)' : 'var(--text-secondary)',
+            fontWeight: activeView === 'studio' ? 700 : 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <span>🥁 Cockpit</span>
+          {currentSongTitle && (
+            <span style={{
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              background: 'var(--emerald)'
+            }} />
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveView && setActiveView('library')}
+          className="btn"
+          style={{
+            padding: '6px 14px',
+            fontSize: '0.85rem',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            background: activeView === 'library' ? 'var(--bg-card)' : 'transparent',
+            boxShadow: activeView === 'library' ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
+            color: activeView === 'library' ? 'var(--amber)' : 'var(--text-secondary)',
+            fontWeight: activeView === 'library' ? 700 : 500
+          }}
+        >
+          <span>📚 Repertorio</span>
+        </button>
+      </div>
+
       {/* Search and Voice Trigger */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, maxWidth: '520px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, maxWidth: '420px' }}>
         <div style={{ position: 'relative', width: '100%' }}>
           <Search size={16} style={{
             position: 'absolute',

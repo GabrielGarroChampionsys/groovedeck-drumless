@@ -16,6 +16,7 @@ La aplicación ya está completamente construida y corriendo localmente en:
 - **Iconos:** Lucide-React
 - **Audio/Video:** YouTube IFrame Player API oficial
 - **Voz / Manos Libres:** Web Speech API nativa con dictado continuo ininterrumpido
+- **Apariencia & Temas:** Motor multi-tema con Dark Pro Audio, Light Studio (Apple Silver), Auto (macOS), Cyber Synthwave y Vintage Wood (`themeManager.js`)
 - **Seguridad & Acceso:** Autenticación con Google y lista blanca estricta exclusiva para `gabriel.alejandro.garro@gmail.com`
 - **Persistencia:** LocalStorage estructurado con importación/exportación JSON (`src/services/storage.js`)
 
