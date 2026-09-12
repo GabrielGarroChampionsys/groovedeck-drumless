@@ -24,10 +24,13 @@ La aplicación ya está completamente construida y corriendo localmente en:
 
 ## 🎯 Funcionalidades Implementadas
 
-0. **Seguridad y Acceso Privado Exclusivo (`LoginGate.jsx` & `auth.js`):**
-   - Sistema de bloqueo inicial donde solo el correo `gabriel.alejandro.garro@gmail.com` puede ingresar.
-   - Cualquier otra cuenta que intente registrarse o entrar es rechazada de inmediato.
-   - En el futuro, este módulo se puede expandir para aceptar pagos o suscripciones con Stripe / LemonSqueezy.
+0. **Página de Inicio / Drummer's Welcome Dashboard (`HomeDashboard.jsx`):**
+   - Saludo personalizado según hora del día para Gabriel con estado de la Donner DED-200 Max + Logic Pro.
+   - **Widgets de Práctica:** Contador de canciones, racha de sesiones de la semana, dominadas y favoritos.
+   - **¿Qué ritmo te pide el cuerpo hoy? (Mood Launchers):** Tarjetas interactivas con BPM y objetivos de práctica (Calentamiento, Pura Energía, Funk Sincopado, Desafío Técnico).
+   - **Botón "Sorpréndeme":** Elige un tema al azar de tu catálogo para tocar sin pensar.
+   - **Continuar Practicando:** Tus canciones más tocadas con botón de Play directo para reanudar.
+   - **Switcher de Vistas en Navbar:** Alterna fluidamente entre 🏠 *Inicio*, 🥁 *Cockpit* y 📚 *Repertorio*.
 
 1. **YouTube Player Cockpit Ergonómico (`PlayerCockpit.jsx`):**
    - Integración oficial de YouTube IFrame API sin anuncios intermedios molestos.
