@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Video, Sliders, Check } from 'lucide-react';
 import { extractYouTubeId, analyzeDrumlessTitle } from '../services/youtubeParser';
+import { analyzeSongWithGemini } from '../services/geminiService';
 import { SSD5_PRESETS } from '../data/initialCatalog';
 
 export default function SongDetailModal({
@@ -53,16 +54,16 @@ export default function SongDetailModal({
 
   if (!isOpen) return null;
 
-  // Acción de Autocompletado Inteligente
-  const handleAutoAnalyze = () => {
+  // Acción de Autocompletado con Gemini AI
+  const handleAutoAnalyze = async () => {
     const rawText = formData.youtubeUrl || formData.title;
     if (!rawText) return;
 
     setAnalyzing(true);
     const ytId = extractYouTubeId(rawText);
-    const analysis = analyzeDrumlessTitle(rawText);
 
-    setTimeout(() => {
+    try {
+      const analysis = await analyzeSongWithGemini(rawText);
       setFormData(prev => ({
         ...prev,
         youtubeId: ytId || prev.youtubeId,
@@ -74,10 +75,13 @@ export default function SongDetailModal({
         difficulty: analysis.difficulty || prev.difficulty,
         ssd5Preset: analysis.ssd5Preset || prev.ssd5Preset,
         notes: analysis.notes || prev.notes,
-        tags: Array.from(new Set([...prev.tags, ...analysis.tags]))
+        tags: Array.from(new Set([...prev.tags, ...(analysis.tags || [])]))
       }));
+    } catch (e) {
+      console.error(e);
+    } finally {
       setAnalyzing(false);
-    }, 300);
+    }
   };
 
   const handleUrlChange = (e) => {

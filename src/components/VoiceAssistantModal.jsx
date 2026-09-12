@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mic, MicOff, X, Sparkles, Volume2, Play, Flame, Music, History, Check } from 'lucide-react';
 import { DrumVoiceAssistant } from '../services/voiceCommander';
+import { askDrumDJWithGemini } from '../services/geminiService';
 
 const QUICK_GENRES = [
   { id: 'rock', label: 'Rock', icon: '🎸' },
@@ -21,6 +22,8 @@ export default function VoiceAssistantModal({
   const [transcript, setTranscript] = useState('');
   const [activeGenreSelected, setActiveGenreSelected] = useState(null);
   const [interpretedIntent, setInterpretedIntent] = useState(null);
+  const [geminiCoach, setGeminiCoach] = useState(null);
+  const [isThinkingGemini, setIsThinkingGemini] = useState(false);
   const [assistantInstance, setAssistantInstance] = useState(null);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function VoiceAssistantModal({
   if (!isOpen) return null;
 
   // Toggle de micrófono: no para hasta que el usuario lo pulsa
-  const toggleListening = () => {
+  const toggleListening = async () => {
     if (!assistantInstance) return;
     if (isListening) {
       // El usuario terminó de hablar voluntariamente -> procesar
@@ -72,8 +75,40 @@ export default function VoiceAssistantModal({
       if (intent.genres?.length > 0) {
         setActiveGenreSelected(intent.genres[0]);
       }
+
+      // Consulta a Gemini AI
+      if (transcript && transcript.trim().length > 3) {
+        setIsThinkingGemini(true);
+        try {
+          const geminiResult = await askDrumDJWithGemini(transcript, songs);
+          if (geminiResult) {
+            setGeminiCoach(geminiResult);
+            // Si Gemini recomendó una canción específica, resaltarla
+            if (geminiResult.selectedSongId) {
+              const recommended = songs.find(s => s.id === geminiResult.selectedSongId);
+              if (recommended) {
+                // Auto-marcar el género si aplica
+                if (recommended.genre) {
+                  const gLower = recommended.genre.toLowerCase();
+                  if (gLower.includes('rock')) setActiveGenreSelected('rock');
+                  else if (gLower.includes('funk')) setActiveGenreSelected('funk');
+                  else if (gLower.includes('grunge')) setActiveGenreSelected('grunge');
+                  else if (gLower.includes('pop')) setActiveGenreSelected('pop');
+                  else if (gLower.includes('shuffle')) setActiveGenreSelected('shuffle');
+                  else if (gLower.includes('metal')) setActiveGenreSelected('metal');
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsThinkingGemini(false);
+        }
+      }
     } else {
       // Volver a encender micrófono para seguir dictando
+      setGeminiCoach(null);
       assistantInstance.start();
       setIsListening(true);
       setInterpretedIntent(null);
@@ -258,7 +293,53 @@ export default function VoiceAssistantModal({
               ✨ <b>Criterio detectado:</b> {interpretedIntent.label}
             </div>
           )}
+
+          {/* Gemini AI Thinking Indicator */}
+          {isThinkingGemini && (
+            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--cyan)' }}>
+              <Sparkles size={16} className="beat-pulse" />
+              <span>Gemini AI está analizando tu técnica y tu repertorio...</span>
+            </div>
+          )}
         </div>
+
+        {/* TARJETA DE RECOMENDACIÓN GEMINI COACH */}
+        {geminiCoach && (
+          <div className="glass-panel" style={{
+            padding: '16px 20px',
+            marginBottom: '22px',
+            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(245, 158, 11, 0.08) 100%)',
+            border: '1px solid var(--cyan)',
+            boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <Sparkles size={18} color="var(--cyan)" />
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Recomendación de tu Drum Coach (Gemini AI)
+              </h4>
+            </div>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: '1.4', marginBottom: '12px' }}>
+              "{geminiCoach.coachMessage}"
+            </p>
+            {geminiCoach.selectedSongId && (
+              <button
+                type="button"
+                onClick={() => {
+                  const song = songs.find(s => s.id === geminiCoach.selectedSongId);
+                  if (song) {
+                    onSelectSongDirectly(song);
+                    onClose();
+                  }
+                }}
+                className="btn btn-primary"
+                style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+              >
+                <Play size={14} fill="#000" />
+                <span>Tocar tema sugerido por Gemini</span>
+              </button>
+            )}
+          </div>
+        )}
 
         {/* LISTA RANKING: LO QUE MÁS TOCAS + LOS OTROS */}
         <div>
