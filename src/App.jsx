@@ -6,11 +6,14 @@ import SongDetailModal from './components/SongDetailModal';
 import VoiceAssistantModal from './components/VoiceAssistantModal';
 import StageModeView from './components/StageModeView';
 import LoginGate from './components/LoginGate';
+import ThemeSelectorModal from './components/ThemeSelectorModal';
 import { getStoredSongs, saveSongs, exportCatalogJSON, logPracticeSession } from './services/storage';
 import { getStoredUser, logoutUser } from './services/auth';
+import { getStoredTheme, applyTheme, initThemeListener } from './services/themeManager';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const [currentTheme, setCurrentTheme] = useState(() => getStoredTheme());
   const [songs, setSongs] = useState(() => getStoredSongs());
   const [activeSongId, setActiveSongId] = useState(() => songs[0]?.id || null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,6 +24,16 @@ export default function App() {
   const [songToEdit, setSongToEdit] = useState(null);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isStageModeOpen, setIsStageModeOpen] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+
+  // Inicializar Tema y escuchar cambios de sistema (auto)
+  useEffect(() => {
+    applyTheme(currentTheme);
+    const cleanup = initThemeListener((mode, effective) => {
+      // Listener de auto-switch
+    });
+    return cleanup;
+  }, [currentTheme]);
 
   // Canción activa
   const currentSong = songs.find(s => s.id === activeSongId) || songs[0] || null;
@@ -161,6 +174,8 @@ export default function App() {
           logoutUser();
           setCurrentUser(null);
         }}
+        currentTheme={currentTheme}
+        onOpenThemeModal={() => setIsThemeModalOpen(true)}
       />
 
       {/* Main Container */}
@@ -219,6 +234,16 @@ export default function App() {
         isOpen={isStageModeOpen}
         onClose={() => setIsStageModeOpen(false)}
         currentSong={currentSong}
+      />
+
+      <ThemeSelectorModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+        currentTheme={currentTheme}
+        onSelectTheme={(newTheme) => {
+          setCurrentTheme(newTheme);
+          applyTheme(newTheme);
+        }}
       />
     </div>
   );

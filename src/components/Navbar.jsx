@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mic, Plus, Tv, Search, SlidersHorizontal, Download, Music } from 'lucide-react';
+import { Mic, Plus, Tv, Search, SlidersHorizontal, Download, Music, Palette } from 'lucide-react';
 
 export default function Navbar({
   searchTerm,
@@ -10,7 +10,9 @@ export default function Navbar({
   onExportCatalog,
   totalSongs = 0,
   currentUser = null,
-  onLogout = null
+  onLogout = null,
+  currentTheme = 'dark',
+  onOpenThemeModal = null
 }) {
   return (
     <header style={{
@@ -114,6 +116,15 @@ export default function Navbar({
           <Tv size={17} color="var(--cyan)" />
           <span style={{ display: 'none', md: 'inline' }}>Modo TV</span>
           <span className="mono" style={{ fontSize: '0.7rem', opacity: 0.6 }}>F</span>
+        </button>
+
+        <button
+          onClick={onOpenThemeModal}
+          className="btn"
+          title="Cambiar Apariencia (Dark, Light, Neon, Vintage)"
+          style={{ height: '42px', padding: '0 12px' }}
+        >
+          <Palette size={17} color="var(--amber)" />
         </button>
 
         <button
