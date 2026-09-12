@@ -15,6 +15,7 @@ La aplicación ya está completamente construida y corriendo localmente en:
 - **Estilos:** Vanilla CSS con Sistema de Diseño **Apple Pro Audio Glassmorphism** (`src/index.css`)
 - **Iconos:** Lucide-React
 - **Audio/Video:** YouTube IFrame Player API oficial
+- **Inteligencia Artificial:** Google Gemini AI oficial (`geminiService.js`) conectado con API Key para análisis musical experto y recomendaciones de Drum Coach.
 - **Voz / Manos Libres:** Web Speech API nativa con dictado continuo ininterrumpido
 - **Apariencia & Temas:** Motor multi-tema con Dark Pro Audio, Light Studio (Apple Silver), Auto (macOS), Cyber Synthwave y Vintage Wood (`themeManager.js`)
 - **Seguridad & Acceso:** Autenticación con Google y lista blanca estricta exclusiva para `gabriel.alejandro.garro@gmail.com`
